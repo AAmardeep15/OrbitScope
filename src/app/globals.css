@@ -1,26 +1,71 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: #0c0e12;
+  --color-surface: #0c0e12;
+  --color-surface-bright: #282c32;
+  --color-surface-container: #171a1e;
+  --color-surface-container-high: #1c2025;
+  --color-surface-container-highest: #22262b;
+  --color-surface-container-low: #111417;
+  --color-surface-container-lowest: #000000;
+  
+  --color-primary: #8ff5ff;
+  --color-primary-container: #00eefc;
+  --color-primary-dim: #00deec;
+  
+  --color-secondary-container: #32495d;
+  --color-on-secondary-container: #bbd3eb;
+
+  --color-tertiary: #ac89ff;
+
+  --color-on-surface: #f8f9fe;
+  --color-on-surface-variant: #a9abb0;
+  --color-outline-variant: #46484c;
+
+  --font-space-grotesk: var(--font-space-grotesk);
+  --font-manrope: var(--font-manrope);
+  --font-mono: var(--font-space-mono);
+
+  --font-display: var(--font-space-grotesk);
+  --font-body: var(--font-manrope);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-on-surface);
+  font-family: var(--font-body), sans-serif;
+}
+
+.glass-panel {
+  background-color: color-mix(in srgb, var(--color-surface-container) 60%, transparent);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+}
+
+.primary-gradient-text {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-container));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Scrollbar styles to match dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface-container-lowest);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-container-high);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-dim);
 }

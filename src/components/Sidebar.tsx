@@ -8,31 +8,31 @@ export default function Sidebar() {
   const filteredCount = useSatelliteStore((state) => state.getFilteredSatellites().length);
 
   return (
-    <div className="w-80 h-full bg-slate-900/80 backdrop-blur-md border-r border-slate-700 p-6 flex flex-col text-slate-200 shadow-xl overflow-y-auto">
+    <div className="w-80 h-full glass-panel border-r border-outline-variant/30 p-6 flex flex-col text-on-surface shadow-xl z-10 overflow-y-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent flex items-center gap-3">
-          <span className="text-4xl">🛰️</span>
+        <h1 className="text-3xl font-display font-bold primary-gradient-text flex items-center gap-3 uppercase tracking-widest">
+          <span className="text-4xl filter drop-shadow-[0_0_10px_rgba(143,245,255,0.6)]">🛰️</span>
           OrbitScope
         </h1>
-        <p className="text-slate-400 text-sm mt-2 font-mono">Track Every Object Above Earth</p>
+        <p className="text-on-surface-variant text-sm mt-2 font-mono uppercase tracking-wider text-xs">Track Every Object Above Earth</p>
       </div>
 
       <div className="space-y-6 flex-1">
         <div>
-          <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">Search</label>
+          <label className="text-[10px] text-primary uppercase tracking-widest font-semibold block mb-2 font-display">Search</label>
           <input
             type="text"
-            placeholder="Search by name, ID..."
-            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors placeholder:text-slate-500"
+            placeholder="SEARCH BY NAME OR ID..."
+            className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-4 py-2.5 text-sm font-mono focus:outline-none focus:border-primary focus:shadow-[0_0_15px_rgba(143,245,255,0.15)] transition-all placeholder:text-outline-variant text-on-surface"
             value={filters.searchQuery}
             onChange={(e) => setFilters({ searchQuery: e.target.value })}
           />
         </div>
 
         <div>
-           <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">Orbit Type</label>
+           <label className="text-[10px] text-primary uppercase tracking-widest font-semibold block mb-2 font-display">Orbit Type</label>
            <select 
-             className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+             className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-4 py-2.5 text-sm font-mono focus:outline-none focus:border-primary transition-all text-on-surface"
              value={filters.orbitType}
              onChange={(e) => setFilters({ orbitType: e.target.value as any })}
            >
@@ -46,9 +46,9 @@ export default function Sidebar() {
         </div>
 
         <div>
-           <label className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-2">Country / Owner</label>
+           <label className="text-[10px] text-primary uppercase tracking-widest font-semibold block mb-2 font-display">Country / Owner</label>
            <select 
-             className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+             className="w-full bg-surface-container-lowest border border-outline-variant/30 rounded px-4 py-2.5 text-sm font-mono focus:outline-none focus:border-primary transition-all text-on-surface"
              value={filters.country}
              onChange={(e) => setFilters({ country: e.target.value })}
            >
@@ -62,19 +62,19 @@ export default function Sidebar() {
            </select>
         </div>
 
-        <div className="pt-4 border-t border-slate-800">
+        <div className="pt-6 border-t border-outline-variant/20 mt-8">
            <div className="flex justify-between text-sm items-center">
-             <span className="text-slate-400">Total Tracked:</span>
-             <span className="font-mono text-emerald-400">{satellites.length.toLocaleString()}</span>
+             <span className="text-on-surface-variant uppercase tracking-wider text-[10px]">Total Tracked:</span>
+             <span className="font-mono text-primary text-lg">{satellites.length.toLocaleString()}</span>
            </div>
            <div className="flex justify-between text-sm items-center mt-2">
-             <span className="text-slate-400">Showing:</span>
-             <span className="font-mono text-blue-400">{filteredCount.toLocaleString()}</span>
+             <span className="text-on-surface-variant uppercase tracking-wider text-[10px]">Showing:</span>
+             <span className="font-mono text-primary-dim text-lg">{filteredCount.toLocaleString()}</span>
            </div>
         </div>
       </div>
       
-      <div className="mt-8 pt-4 border-t border-slate-800 text-xs text-slate-500 text-center">
+      <div className="mt-8 pt-4 border-t border-outline-variant/20 text-[10px] font-mono text-on-surface-variant text-center tracking-widest uppercase">
         Data provided by CelesTrak
       </div>
     </div>

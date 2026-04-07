@@ -57,15 +57,15 @@ export default function Home() {
   }, [init, setLoading, setSatellites, setError]);
 
   return (
-    <main className="flex h-screen w-screen overflow-hidden bg-black font-sans text-slate-200">
+    <main className="flex h-screen w-screen overflow-hidden bg-surface-container-lowest font-body text-on-surface">
       <Sidebar />
       
       <div className="flex-1 relative">
         {isLoading ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 z-50">
-            <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mb-4"></div>
-            <h2 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">Initializing OrbitScope</h2>
-            <p className="text-slate-500 font-mono text-sm mt-2">Connecting to orbital databanks...</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-container-lowest z-50">
+            <div className="w-16 h-16 border-2 border-surface-container-highest border-t-primary rounded-full animate-spin mb-4"></div>
+            <h2 className="text-xl font-display primary-gradient-text tracking-widest uppercase">Initializing OrbitScope</h2>
+            <p className="text-on-surface-variant font-mono text-xs mt-2 uppercase tracking-wider">Connecting to orbital databanks...</p>
           </div>
         ) : (
           <EarthGlobe />
@@ -74,30 +74,30 @@ export default function Home() {
         <SatelliteDetailPanel />
         
         {init && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/80 backdrop-blur-md rounded-full border border-slate-700 p-2 flex items-center gap-4 px-6 opacity-80 hover:opacity-100 transition-opacity">
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-panel rounded-full border border-outline-variant/30 p-2 flex items-center gap-4 px-6 opacity-80 hover:opacity-100 transition-opacity">
             <button 
               onClick={() => togglePlaying()}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 transition-colors"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest hover:bg-surface-bright text-on-surface border border-outline-variant/50 transition-colors"
             >
               {isPlaying ? '⏸' : '▶'}
             </button>
-            <div className="font-mono text-sm text-emerald-400 flex flex-col items-center">
-              <span className="text-[10px] text-slate-500 uppercase tracking-widest">Live Time</span>
+            <div className="font-mono text-sm text-primary flex flex-col items-center min-w-[80px]">
+              <span className="text-[10px] text-on-surface-variant uppercase tracking-widest">Live Time</span>
               {currentTime.toISOString().split('T')[1].split('.')[0]} UTC
             </div>
             
-            <div className="h-6 w-px bg-slate-700 mx-2"></div>
+            <div className="h-6 w-px bg-outline-variant/50 mx-2"></div>
             
             <button 
               onClick={() => toggleLabels()}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors ${showLabels ? 'bg-blue-500 text-white' : 'bg-slate-800 text-slate-400'}`}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors ${showLabels ? 'bg-primary text-surface-container-lowest' : 'bg-surface-container-highest text-on-surface-variant hover:text-on-surface'}`}
             >
               Labels
             </button>
 
             <button 
               onClick={() => toggleOrbitPaths()}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors ${showOrbitPaths ? 'bg-emerald-500 text-white' : 'bg-slate-800 text-slate-400'}`}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors ${showOrbitPaths ? 'bg-primary text-surface-container-lowest' : 'bg-surface-container-highest text-on-surface-variant hover:text-on-surface'}`}
             >
               Orbit Path
             </button>
