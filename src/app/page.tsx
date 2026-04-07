@@ -57,15 +57,18 @@ export default function Home() {
   }, [init, setLoading, setSatellites, setError]);
 
   return (
-    <main className="flex h-screen w-screen overflow-hidden bg-surface-container-lowest font-body text-on-surface">
+    <main className="flex h-screen w-screen overflow-hidden bg-surface-container-lowest font-body text-on-surface selection:bg-primary/30">
       <Sidebar />
       
       <div className="flex-1 relative">
         {isLoading ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-container-lowest z-50">
-            <div className="w-16 h-16 border-2 border-surface-container-highest border-t-primary rounded-full animate-spin mb-4"></div>
-            <h2 className="text-xl font-display primary-gradient-text tracking-widest uppercase">Initializing OrbitScope</h2>
-            <p className="text-on-surface-variant font-mono text-xs mt-2 uppercase tracking-wider">Connecting to orbital databanks...</p>
+            <div className="w-48 h-48 rounded-full border border-surface-container relative animate-[spin_10s_linear_infinite] mb-8">
+              <div className="absolute top-0 left-1/2 -ml-1 w-2 h-2 bg-primary rounded-full shadow-[0_0_15px_var(--color-primary)]"></div>
+              <div className="absolute bottom-0 right-1/2 -mr-1 w-1 h-1 bg-primary-dim rounded-full shadow-[0_0_10px_var(--color-primary-dim)] opacity-50"></div>
+            </div>
+            <h2 className="text-xl font-display font-medium text-on-surface tracking-[0.2em] uppercase">Tuning Instruments</h2>
+            <p className="text-primary font-mono text-[10px] mt-4 uppercase tracking-[0.3em] animate-pulse">Establishing Telemetry Link...</p>
           </div>
         ) : (
           <EarthGlobe />
@@ -74,32 +77,33 @@ export default function Home() {
         <SatelliteDetailPanel />
         
         {init && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-panel rounded-full border border-outline-variant/30 p-2 flex items-center gap-4 px-6 opacity-80 hover:opacity-100 transition-opacity">
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 glass-panel rounded-full ghost-border p-3 flex items-center gap-6 px-8 opacity-60 hover:opacity-100 transition-opacity duration-300 ambient-shadow">
             <button 
               onClick={() => togglePlaying()}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest hover:bg-surface-bright text-on-surface border border-outline-variant/50 transition-colors"
+              className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 ${isPlaying ? 'bg-primary/10 text-primary shadow-[0_0_15px_rgba(143,245,255,0.2)]' : 'bg-surface-bright text-on-surface hover:text-primary'} ghost-border`}
+              aria-label={isPlaying ? 'Pause tracking' : 'Resume tracking'}
             >
               {isPlaying ? '⏸' : '▶'}
             </button>
-            <div className="font-mono text-sm text-primary flex flex-col items-center min-w-[80px]">
-              <span className="text-[10px] text-on-surface-variant uppercase tracking-widest">Live Time</span>
-              {currentTime.toISOString().split('T')[1].split('.')[0]} UTC
+            <div className="font-mono text-sm text-primary flex flex-col items-center min-w-[100px]">
+              <span className="text-[10px] text-on-surface-variant uppercase tracking-[0.2em]">Live Time</span>
+              <span className="flicker-transition font-bold">{currentTime.toISOString().split('T')[1].split('.')[0]} <span className="opacity-50 text-xs">UTC</span></span>
             </div>
             
-            <div className="h-6 w-px bg-outline-variant/50 mx-2"></div>
+            <div className="h-8 w-px bg-outline-variant/30 mx-2"></div>
             
             <button 
               onClick={() => toggleLabels()}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors ${showLabels ? 'bg-primary text-surface-container-lowest' : 'bg-surface-container-highest text-on-surface-variant hover:text-on-surface'}`}
+              className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-[0.15em] transition-all duration-300 ${showLabels ? 'btn-primary' : 'btn-secondary'}`}
             >
               Labels
             </button>
 
             <button 
               onClick={() => toggleOrbitPaths()}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-colors ${showOrbitPaths ? 'bg-primary text-surface-container-lowest' : 'bg-surface-container-highest text-on-surface-variant hover:text-on-surface'}`}
+              className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-[0.15em] transition-all duration-300 ${showOrbitPaths ? 'btn-primary' : 'btn-secondary'}`}
             >
-              Orbit Path
+              Orbit Paths
             </button>
           </div>
         )}
