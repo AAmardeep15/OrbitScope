@@ -26,6 +26,12 @@ export default function SatelliteDetailPanel() {
         </button>
       </div>
 
+      {selectedSatellite.description && (
+        <div className="mb-8 p-4 bg-primary/5 rounded-lg border-l-2 border-primary ghost-border text-sm font-body text-on-surface-variant leading-relaxed">
+          {selectedSatellite.description}
+        </div>
+      )}
+
       <div className="space-y-6 mb-8">
         <StatRow label="Country / Owner" value={selectedSatellite.country} icon="🌍" />
         <StatRow label="Launch Year" value={selectedSatellite.launchDate || 'Unknown'} icon="🚀" />

@@ -26,6 +26,7 @@ export interface SatelliteInfo {
   launchDate?: string;
   operator?: string;
   purpose?: string;
+  description?: string;
   inclination: number;
   period: number; // minutes
   apogee: number; // km

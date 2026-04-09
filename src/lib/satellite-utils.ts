@@ -135,6 +135,18 @@ export function parseTLEToSatelliteInfo(tle: TLERecord): Partial<SatelliteInfo> 
     // Determine country from name/catalog
     const country = guessCountry(tle.name, noradId);
 
+    const description = generateSatelliteDescription({
+      name: tle.name.trim(),
+      id: noradId,
+      country,
+      orbitType,
+      launchYear: launchYear ? `${launchYear}` : undefined,
+      apogee: Math.max(0, apogee),
+      perigee: Math.max(0, perigee),
+      inclination,
+      period,
+    });
+
     return {
       id: noradId,
       name: tle.name.trim(),
@@ -147,6 +159,7 @@ export function parseTLEToSatelliteInfo(tle: TLERecord): Partial<SatelliteInfo> 
       apogee: Math.max(0, apogee),
       perigee: Math.max(0, perigee),
       eccentricity,
+      description,
       active: true,
     };
   } catch {
@@ -164,6 +177,64 @@ export function parseTLEToSatelliteInfo(tle: TLERecord): Partial<SatelliteInfo> 
       active: true,
     };
   }
+}
+
+/**
+ * Generate a descriptive, human-readable paragraph for a satellite
+ */
+function generateSatelliteDescription(info: any): string {
+  const { name, id, country, orbitType, launchYear, apogee, perigee, inclination, period } = info;
+  
+  let desc = `${name} (NORAD ID: ${id}) is a `;
+  
+  if (country !== 'International' && country !== 'Unknown') {
+    desc += `${country}-operated `;
+  }
+  
+  desc += `satellite `;
+  
+  if (launchYear) {
+    desc += `launched in ${launchYear}. `;
+  } else {
+    desc += `orbiting the Earth. `;
+  }
+
+  desc += `It follows a `;
+  
+  if (orbitType !== 'Unknown') {
+     const orbitNames: Record<string, string> = {
+       'LEO': 'Low Earth Orbit (LEO)',
+       'MEO': 'Medium Earth Orbit (MEO)',
+       'GEO': 'Geosynchronous Equatorial Orbit (GEO)',
+       'HEO': 'High Earth Orbit (HEO)',
+       'SSO': 'Sun-Synchronous Orbit (SSO)'
+     };
+     desc += `${orbitNames[orbitType] || orbitType} `;
+  } else {
+     desc += `trajectory `;
+  }
+  
+  desc += `with an apogee (farthest point) of ${Math.round(apogee).toLocaleString()} km and a perigee (closest point) of ${Math.round(perigee).toLocaleString()} km. `;
+  
+  desc += `The orbit is inclined at ${inclination.toFixed(1)} degrees relative to the equator, and it takes approximately ${period.toFixed(1)} minutes to complete one full revolution around the Earth.`;
+  
+  // Custom tweaks based on common satellite names
+  const upper = name.toUpperCase();
+  if (upper.includes('STARLINK')) {
+    desc += ` Starlink is a satellite internet constellation operated by SpaceX, providing satellite Internet access coverage to most of the Earth.`;
+  } else if (upper.includes('ISS') || upper.includes('ZARYA')) {
+    desc += ` The International Space Station (ISS) is a modular space station (habitable artificial satellite) in low Earth orbit. It is a multinational collaborative project.`;
+  } else if (upper.includes('HUBBLE') || upper.includes('HST')) {
+    desc += ` The Hubble Space Telescope is a large space telescope launched into low Earth orbit in 1990 and remains in operation.`;
+  } else if (upper.includes('NOAA') || upper.includes('METEOR') || upper.includes('GOES')) {
+    desc += ` This is a meteorological satellite primarily used for weather forecasting, storm tracking, and climate research.`;
+  } else if (upper.includes('GPS') || upper.includes('GLONASS') || upper.includes('GALILEO') || upper.includes('BEIDOU')) {
+    desc += ` It is part of a global navigation satellite system (GNSS) providing geolocation and time information to a GPS receiver.`;
+  } else if (upper.includes('DEB') || upper.includes('DEBRIS') || upper.includes('R/B')) {
+    desc += ` Note: This object appears to be space debris or a spent rocket body, rather than an active payload.`;
+  }
+  
+  return desc;
 }
 
 /**
