@@ -10,22 +10,40 @@ import { latLonToVector3 } from '@/lib/satellite-utils';
 const EARTH_RADIUS = 5;
 
 function EarthSphere() {
-  // We use a high-res texture for earth
+  // Use realistic textures for a "Google Earth" style view
   const textureLoader = new THREE.TextureLoader();
-  const earthMap = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-dark.jpg');
+  const earthMap = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
   const bumpMap = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-topology.png');
+  const waterMap = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-water.png');
+  const cloudMap = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_clouds_1024.png');
 
   return (
-    <mesh>
-      <sphereGeometry args={[EARTH_RADIUS, 64, 64]} />
-      <meshPhongMaterial
-        map={earthMap}
-        bumpMap={bumpMap}
-        bumpScale={0.05}
-        specular={new THREE.Color('grey')}
-        shininess={10}
-      />
-    </mesh>
+    <group>
+      {/* Real Earth Body */}
+      <mesh>
+        <sphereGeometry args={[EARTH_RADIUS, 64, 64]} />
+        <meshPhongMaterial
+          map={earthMap}
+          bumpMap={bumpMap}
+          bumpScale={0.03}
+          specularMap={waterMap}
+          specular={new THREE.Color(0x333333)}
+          shininess={15}
+        />
+      </mesh>
+      
+      {/* Atmosphere / Clouds */}
+      <mesh>
+        <sphereGeometry args={[EARTH_RADIUS * 1.01, 64, 64]} />
+        <meshPhongMaterial
+          map={cloudMap}
+          transparent={true}
+          opacity={0.4}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+        />
+      </mesh>
+    </group>
   );
 }
 
