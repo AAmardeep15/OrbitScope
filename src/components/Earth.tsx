@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { OrbitControls, Stars, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useSatelliteStore } from '@/lib/satellite-store';
@@ -10,12 +10,13 @@ import { latLonToVector3 } from '@/lib/satellite-utils';
 const EARTH_RADIUS = 5;
 
 function EarthSphere() {
-  // Use realistic textures for a "Google Earth" style view
-  const textureLoader = new THREE.TextureLoader();
-  const earthMap = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
-  const bumpMap = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-topology.png');
-  const waterMap = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-water.png');
-  const cloudMap = textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_clouds_1024.png');
+  // Use useLoader to perfectly cache textures and prevent blinking/flickering in React Three Fiber
+  const [earthMap, bumpMap, waterMap, cloudMap] = useLoader(THREE.TextureLoader, [
+    'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg',
+    'https://unpkg.com/three-globe/example/img/earth-topology.png',
+    'https://unpkg.com/three-globe/example/img/earth-water.png',
+    'https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_clouds_1024.png'
+  ]);
 
   return (
     <group>
