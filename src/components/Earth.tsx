@@ -152,10 +152,20 @@ export default function EarthGlobe() {
         
         <OrbitControls 
           enablePan={false} 
-          minDistance={EARTH_RADIUS * 1.1} 
+          minDistance={EARTH_RADIUS * 1.05} 
           maxDistance={EARTH_RADIUS * 5} 
           autoRotate={!useSatelliteStore.getState().selectedSatellite}
           autoRotateSpeed={0.5}
+          onChange={(e) => {
+            const controls = e?.target;
+            if (controls) {
+              const distance = controls.getDistance();
+              if (distance < EARTH_RADIUS * 1.1) {
+                // Throttle/prevent multiple rapid dispatches if already changing
+                useSatelliteStore.getState().setViewMode('2d');
+              }
+            }
+          }}
         />
       </Canvas>
     </div>

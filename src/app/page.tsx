@@ -1,15 +1,24 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useSatelliteStore } from '@/lib/satellite-store';
 import { parseTLEToSatelliteInfo } from '@/lib/satellite-utils';
 import Sidebar from '@/components/Sidebar';
 import EarthGlobe from '@/components/Earth';
 import SatelliteDetailPanel from '@/components/SatelliteDetailPanel';
 
+// Dynamically import Map2D because leaflet depends on window object
+const Map2D = dynamic(() => import('@/components/Map2D'), { 
+  ssr: false, 
+  loading: () => <div className="w-full h-full bg-surface-container-lowest flex items-center justify-center text-primary animate-pulse">Initializing Terrestrial Map...</div> 
+});
+
 export default function Home() {
   const { setSatellites, setLoading, setError, isLoading } = useSatelliteStore();
   const [init, setInit] = useState(false);
+
+  const viewMode = useSatelliteStore((state) => state.viewMode);
 
   const isPlaying = useSatelliteStore((state) => state.isPlaying);
   const currentTime = useSatelliteStore((state) => state.currentTime);
@@ -70,6 +79,8 @@ export default function Home() {
             <h2 className="text-xl font-display font-medium text-on-surface tracking-[0.2em] uppercase">Tuning Instruments</h2>
             <p className="text-primary font-mono text-[10px] mt-4 uppercase tracking-[0.3em] animate-pulse">Establishing Telemetry Link...</p>
           </div>
+        ) : viewMode === '2d' ? (
+          <Map2D />
         ) : (
           <EarthGlobe />
         )}
