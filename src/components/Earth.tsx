@@ -154,8 +154,7 @@ export default function EarthGlobe() {
           enablePan={false} 
           minDistance={EARTH_RADIUS * 1.05} 
           maxDistance={EARTH_RADIUS * 5} 
-          autoRotate={!useSatelliteStore.getState().selectedSatellite}
-          autoRotateSpeed={0.5}
+          autoRotate={false}
           onChange={(e) => {
             const controls = e?.target;
             if (controls) {
