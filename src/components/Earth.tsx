@@ -48,53 +48,142 @@ function EarthSphere() {
   );
 }
 
-function Satellites() {
-  const { satellites, filters, selectedSatellite } = useSatelliteStore();
-  const selectSatellite = useSatelliteStore((state) => state.selectSatellite);
-  const showLabels = useSatelliteStore((state) => state.showLabels);
+import { useRef, useMemo } from 'react';
 
+function FastSatelliteLabel({ sat, isSelected }: { sat: any, isSelected: boolean }) {
+  const groupRef = useRef<THREE.Group>(null);
+  
+  // Update position directly in the WebGL loop using the ref, bypassing React completely!
+  useFrame(() => {
+    if (groupRef.current && sat.position) {
+      const [x, y, z] = latLonToVector3(sat.position.latitude, sat.position.longitude, sat.position.altitude, EARTH_RADIUS);
+      groupRef.current.position.set(x, y, z);
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      <Html distanceFactor={15} center zIndexRange={[100, 0]}>
+        <div className={`text-xs px-2 py-1 rounded bg-black/70 whitespace-nowrap pointer-events-none 
+          ${isSelected ? 'text-neon border border-neon font-bold shadow-[0_0_10px_rgba(0,255,255,0.8)]' : 'text-white/80'}`}>
+          {sat.name}
+        </div>
+      </Html>
+    </group>
+  );
+}
+
+function SatelliteLabels() {
+  const showLabels = useSatelliteStore((state) => state.showLabels);
+  const selectedSatellite = useSatelliteStore((state) => state.selectedSatellite);
+  
+  // We need to re-render labels when labels toggle, or when selected changes.
+  // We don't subscribe to satellites list directly to avoid 100ms re-renders.
+  // Instead, when these trigger, we grab the latest state for rendering.
   const filteredSatellites = useSatelliteStore.getState().getFilteredSatellites();
   
-  // Removed useFrame mutation of zustand state to prevent infinite loops.
-  // Positions are now updated alongside currentTime.
+  // Only render selected satellite if showLabels is off
+  if (!showLabels && selectedSatellite) {
+    const sat = filteredSatellites.find((s) => s.id === selectedSatellite.id);
+    if (sat) return <FastSatelliteLabel sat={sat} isSelected={true} />;
+    return null;
+  }
+  
+  // If show labels, limit to 50 max to prevent HTML DOM from slowing the app to a crawl.
+  // And ensure the selected one is always included.
+  const MAX_LABELS = 50; 
+  const visibleSats = showLabels ? filteredSatellites.slice(0, MAX_LABELS) : [];
+  
+  return (
+    <group>
+      {visibleSats.map((sat) => {
+        const isSelected = selectedSatellite?.id === sat.id;
+        return <FastSatelliteLabel key={sat.id} sat={sat} isSelected={isSelected} />;
+      })}
+      
+      {showLabels && selectedSatellite && !visibleSats.find((s) => s.id === selectedSatellite.id) && (
+        <FastSatelliteLabel 
+          sat={filteredSatellites.find((s) => s.id === selectedSatellite.id)} 
+          isSelected={true} 
+        />
+      )}
+    </group>
+  );
+}
+
+function Satellites() {
+  const selectSatellite = useSatelliteStore((state) => state.selectSatellite);
+  
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+  
+  // Use memoized three.js objects for fast mutation
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const colorObj = useMemo(() => new THREE.Color(), []);
+
+  // useFrame updates all satellite positions and colors every frame directly in WebGL
+  useFrame(() => {
+    if (!meshRef.current) return;
+    
+    // Get fresh data without causing any React re-renders!
+    const sats = useSatelliteStore.getState().getFilteredSatellites();
+    const currentSelected = useSatelliteStore.getState().selectedSatellite;
+    
+    sats.forEach((sat, i) => {
+      if (!sat.position) return;
+      
+      const isSelected = currentSelected?.id === sat.id;
+      const [x, y, z] = latLonToVector3(sat.position.latitude, sat.position.longitude, sat.position.altitude, EARTH_RADIUS);
+      
+      // Update Transform
+      dummy.position.set(x, y, z);
+      const scale = isSelected ? 2.5 : 1;
+      dummy.scale.set(scale, scale, scale);
+      dummy.updateMatrix();
+      meshRef.current!.setMatrixAt(i, dummy.matrix);
+      
+      // Update Color
+      let hex = '#0ff'; // Neon Cyan matching rest of UI
+      if (isSelected) hex = '#fff'; // White for selected
+      else if (sat.orbitType === 'GEO') hex = '#f0f'; // Neon Magenta
+      else if (sat.orbitType === 'MEO') hex = '#a78bfa'; // Purple
+      
+      colorObj.set(hex);
+      meshRef.current!.setColorAt(i, colorObj);
+    });
+    
+    meshRef.current.instanceMatrix.needsUpdate = true;
+    if (meshRef.current.instanceColor) {
+      meshRef.current.instanceColor.needsUpdate = true;
+    }
+  });
+
+  // Extract primitive count so React only re-renders the InstancedMesh when the filter result length changes
+  const satelliteCount = useSatelliteStore((state) => state.getFilteredSatellites().length);
 
   return (
     <group>
-      {filteredSatellites.map((sat) => {
-        if (!sat.position) return null;
-        
-        // Render each satellite
-        // In a real high-perf app with 10k items, we should use InstancedMesh.
-        // For keeping React simplicity and < 2000 items, normal meshes can work, 
-        // but let's just render the selected one distinctly.
-        
-        const isSelected = selectedSatellite?.id === sat.id;
-        const [x, y, z] = latLonToVector3(sat.position.latitude, sat.position.longitude, sat.position.altitude, EARTH_RADIUS);
-        
-        let color = '#4ade80'; // Default green
-        if (isSelected) color = '#facc15'; // Yellow if selected
-        else if (sat.orbitType === 'GEO') color = '#60a5fa'; // Blue
-        else if (sat.orbitType === 'MEO') color = '#a78bfa'; // Purple
-
-        return (
-          <group key={sat.id} position={[x, y, z]}>
-            <mesh onClick={(e) => { e.stopPropagation(); selectSatellite(sat); }}>
-              <sphereGeometry args={[isSelected ? 0.08 : 0.04, 16, 16]} />
-              <meshBasicMaterial color={color} />
-            </mesh>
-            {(showLabels || isSelected) && (
-              <Html distanceFactor={15} center>
-                <div className={`text-xs px-2 py-1 rounded bg-black/70 whitespace-nowrap 
-                  ${isSelected ? 'text-yellow-400 border border-yellow-400 font-bold' : 'text-white/80'}`}>
-                  {sat.name}
-                </div>
-              </Html>
-            )}
-            
-            {/* Draw brief trail or orbit path if selected */}
-          </group>
-        );
-      })}
+      {/* 
+        InstancedMesh allows us to render thousands of identical geometry meshes in a SINGLE draw call. 
+        It is fundamentally required for performance in this kind of app.
+      */}
+      <instancedMesh
+        ref={meshRef}
+        args={[undefined as any, undefined as any, satelliteCount]}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (e.instanceId !== undefined) {
+             const sats = useSatelliteStore.getState().getFilteredSatellites();
+             const sat = sats[e.instanceId];
+             if (sat) selectSatellite(sat);
+          }
+        }}
+      >
+        <sphereGeometry args={[0.04, 16, 16]} />
+        <meshBasicMaterial />
+      </instancedMesh>
+      
+      {/* HTML Labels managed separately to avoid main component re-renders */}
+      <SatelliteLabels />
     </group>
   );
 }
@@ -127,7 +216,9 @@ function SelectedOrbitPath() {
 }
 
 export default function EarthGlobe() {
-  const { isPlaying, setCurrentTime, updatePositions } = useSatelliteStore();
+  const isPlaying = useSatelliteStore((state) => state.isPlaying);
+  const setCurrentTime = useSatelliteStore((state) => state.setCurrentTime);
+  const updatePositions = useSatelliteStore((state) => state.updatePositions);
 
   useEffect(() => {
     if (!isPlaying) return;
