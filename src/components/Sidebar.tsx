@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useSatelliteStore } from '@/lib/satellite-store';
+import Logo from '@/components/Logo';
 
 export default function Sidebar() {
   const { filters, setFilters, isLoading, satellites } = useSatelliteStore();
@@ -11,7 +12,7 @@ export default function Sidebar() {
     <div className="w-96 h-full glass-panel border-r ghost-border p-8 flex flex-col text-on-surface z-10 overflow-y-auto">
       <div className="mb-12">
         <h1 className="text-4xl font-display font-bold primary-gradient-text flex items-center gap-4 uppercase tracking-widest leading-none">
-          <span className="text-5xl filter drop-shadow-[0_0_10px_rgba(143,245,255,0.6)] mix-blend-screen">🛰️</span>
+          <Logo className="w-12 h-12 text-primary drop-shadow-[0_0_10px_rgba(143,245,255,0.6)] mix-blend-screen" />
           Orbit<br/>Scope
         </h1>
         <p className="text-on-surface-variant mt-4 font-mono uppercase tracking-wider text-xs">Track Every Object Above Earth</p>
