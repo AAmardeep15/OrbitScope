@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { OrbitControls, Stars, Html } from '@react-three/drei';
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { useSatelliteStore } from '@/lib/satellite-store';
 import { latLonToVector3 } from '@/lib/satellite-utils';
@@ -143,11 +144,13 @@ function Satellites() {
       
       // Update Color
       let hex = '#0ff'; // Neon Cyan matching rest of UI
-      if (isSelected) hex = '#fff'; // White for selected
-      else if (sat.orbitType === 'GEO') hex = '#f0f'; // Neon Magenta
+      if (isSelected) hex = '#ffffff'; // White for selected
+      else if (sat.orbitType === 'GEO') hex = '#ff00ff'; // Neon Magenta
       else if (sat.orbitType === 'MEO') hex = '#a78bfa'; // Purple
       
       colorObj.set(hex);
+      // Push into HDR range for intense Bloom glow!
+      colorObj.multiplyScalar(isSelected ? 5.0 : 1.8);
       meshRef.current!.setColorAt(i, colorObj);
     });
     
@@ -207,10 +210,10 @@ function SelectedOrbitPath() {
 
   const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
 
-  const line = new THREE.Line(
-    lineGeometry, 
-    new THREE.LineBasicMaterial({ color: 0xfacc15, linewidth: 2, transparent: true, opacity: 0.6 })
-  );
+  const mat = new THREE.LineBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.8 });
+  mat.color.multiplyScalar(3.0); // HDR bloom
+  
+  const line = new THREE.Line(lineGeometry, mat);
 
   return <primitive object={line} />;
 }
@@ -231,11 +234,22 @@ export default function EarthGlobe() {
 
   return (
     <div className="w-full h-full relative cursor-crosshair">
-      <Canvas camera={{ position: [0, 0, 12], fov: 45 }}>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1.5} />
+      <Canvas 
+        camera={{ position: [0, 0, 12], fov: 45 }}
+        gl={{ antialias: false, toneMapping: THREE.ACESFilmicToneMapping }} // Better post-processing compatibility
+      >
+        <ambientLight intensity={0.2} />
+        <directionalLight position={[10, 10, 5]} intensity={2.0} color="#e0f7fa" />
+        <pointLight position={[-10, -10, -5]} intensity={0.5} color="#00eefc" />
         
-        <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+        {/* Post Processing Effects for High-End Futuristic Look */}
+        <EffectComposer multisampling={8}>
+          <Bloom luminanceThreshold={1.0} mipmapBlur intensity={1.5} luminanceSmoothing={0.5} />
+          <Vignette eskil={false} offset={0.1} darkness={0.8} />
+        </EffectComposer>
+        
+        {/* Amplify Stars for better Bloom */}
+        <Stars radius={100} depth={50} count={5000} factor={6} saturation={1} fade speed={1.5} />
         
         <EarthSphere />
         <Satellites />
