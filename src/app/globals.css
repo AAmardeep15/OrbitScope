@@ -28,8 +28,8 @@
   --font-manrope: var(--font-manrope);
   --font-mono: var(--font-space-mono);
 
-  --font-display: var(--font-space-grotesk);
-  --font-body: var(--font-manrope);
+  --font-display: "Times New Roman", Times, serif;
+  --font-body: "Times New Roman", Times, serif;
 }
 
 :root {
