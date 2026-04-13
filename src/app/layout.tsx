@@ -33,7 +33,7 @@ export default function RootLayout({
       lang="en"
       className={`${spaceGrotesk.variable} ${manrope.variable} ${spaceMono.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col font-manrope bg-surface text-on-surface hover-transition">
+      <body className="min-h-full flex flex-col bg-surface text-on-surface hover-transition">
         {children}
       </body>
     </html>
