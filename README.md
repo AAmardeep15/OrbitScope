@@ -31,7 +31,3 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## Author
-
-- **LinkedIn:** [Amardeep (amardeep15)](https://www.linkedin.com/in/amardeep15)
