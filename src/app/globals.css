@@ -2,14 +2,14 @@
 @import "leaflet/dist/leaflet.css";
 
 @theme inline {
-  --color-background: #0c0e12;
-  --color-surface: #0c0e12;
-  --color-surface-bright: #282c32;
-  --color-surface-container: #171a1e;
-  --color-surface-container-high: #1c2025;
-  --color-surface-container-highest: #22262b;
-  --color-surface-container-low: #111417;
-  --color-surface-container-lowest: #000000;
+  --color-background: #14161a;
+  --color-surface: #14161a;
+  --color-surface-bright: #30353c;
+  --color-surface-container: #1e2227;
+  --color-surface-container-high: #24282d;
+  --color-surface-container-highest: #2a2f35;
+  --color-surface-container-low: #181b20;
+  --color-surface-container-lowest: #08090a;
   
   --color-primary: #8ff5ff;
   --color-primary-container: #00eefc;
