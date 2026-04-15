@@ -11,7 +11,7 @@ import SatelliteDetailPanel from '@/components/SatelliteDetailPanel';
 // Dynamically import Map2D because leaflet depends on window object
 const Map2D = dynamic(() => import('@/components/Map2D'), { 
   ssr: false, 
-  loading: () => <div className="w-full h-full bg-surface-container-lowest flex items-center justify-center text-primary animate-pulse">Initializing Terrestrial Map...</div> 
+  loading: () => null 
 });
 
 export default function Home() {
@@ -70,16 +70,7 @@ export default function Home() {
       <Sidebar />
       
       <div className="flex-1 relative">
-        {isLoading ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-container-lowest z-50">
-            <div className="w-48 h-48 rounded-full border border-surface-container relative animate-[spin_10s_linear_infinite] mb-8">
-              <div className="absolute top-0 left-1/2 -ml-1 w-2 h-2 bg-primary rounded-full shadow-[0_0_15px_var(--color-primary)]"></div>
-              <div className="absolute bottom-0 right-1/2 -mr-1 w-1 h-1 bg-primary-dim rounded-full shadow-[0_0_10px_var(--color-primary-dim)] opacity-50"></div>
-            </div>
-            <h2 className="text-xl font-display font-medium text-on-surface tracking-[0.2em] uppercase">Tuning Instruments</h2>
-            <p className="text-primary font-mono text-[10px] mt-4 uppercase tracking-[0.3em] animate-pulse">Establishing Telemetry Link...</p>
-          </div>
-        ) : viewMode === '2d' ? (
+        {viewMode === '2d' ? (
           <Map2D />
         ) : (
           <EarthGlobe />
