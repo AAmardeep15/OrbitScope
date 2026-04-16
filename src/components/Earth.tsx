@@ -65,9 +65,29 @@ function FastSatelliteLabel({ sat, isSelected }: { sat: any, isSelected: boolean
   return (
     <group ref={groupRef}>
       <Html distanceFactor={15} center zIndexRange={[100, 0]}>
-        <div className={`text-xs px-2 py-1 rounded bg-black/70 whitespace-nowrap pointer-events-none 
-          ${isSelected ? 'text-neon border border-neon font-bold shadow-[0_0_10px_rgba(0,255,255,0.8)]' : 'text-white/80'}`}>
-          {sat.name}
+        <div className={`text-xs px-3 py-2 rounded-lg glass-panel ghost-border whitespace-nowrap pointer-events-none transition-all duration-300
+          ${isSelected ? 'bg-surface-container/90 border-primary/50 text-primary font-bold shadow-[0_0_15px_rgba(143,245,255,0.3)] scale-110' : 'bg-black/60 text-white/80 border-transparent'}`}>
+          <div className="flex items-center gap-2">
+            {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>}
+            {sat.name}
+          </div>
+          
+          {isSelected && (
+            <div className="mt-2 pt-2 border-t border-outline-variant/30 flex flex-col gap-1 text-[10px] font-mono font-normal tracking-wide text-on-surface">
+              <div className="flex justify-between gap-6">
+                <span className="text-on-surface-variant">ALT</span>
+                <span>{sat.position?.altitude?.toFixed(0) || 0} km</span>
+              </div>
+              <div className="flex justify-between gap-6">
+                <span className="text-on-surface-variant">VEL</span>
+                <span>{sat.position?.velocity?.toFixed(2) || 0} km/s</span>
+              </div>
+              <div className="flex justify-between gap-6">
+                <span className="text-on-surface-variant">TYPE</span>
+                <span className="text-primary">{sat.orbitType}</span>
+              </div>
+            </div>
+          )}
         </div>
       </Html>
     </group>

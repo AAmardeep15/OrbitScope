@@ -94,18 +94,51 @@ function SatellitesLayer() {
                 permanent={isSelected} 
                 direction="top" 
                 offset={[0, -8]}
-                className="satellite-tooltip"
+                className={isSelected ? "satellite-tooltip-selected !bg-surface-container/90 !border-primary/50 !text-primary !shadow-[0_0_15px_rgba(143,245,255,0.3)] !rounded-lg !p-3 glass-panel ghost-border" : "satellite-tooltip !bg-black/60 !text-white/80 !border-transparent !rounded-md !px-2 !py-1"}
+                opacity={1}
               >
-                <span style={{ 
-                  color: isSelected ? '#facc15' : '#8ff5ff', 
-                  fontWeight: isSelected ? 700 : 400,
-                  fontFamily: 'var(--font-space-grotesk), monospace',
-                  fontSize: '11px',
-                  letterSpacing: '0.05em',
-                  textTransform: 'uppercase' as const
-                }}>
-                  {sat.name}
-                </span>
+                <div style={{ fontFamily: 'var(--font-mono), monospace' }}>
+                  <div style={{ 
+                    color: isSelected ? '#8ff5ff' : '#ffffff', 
+                    fontWeight: isSelected ? 700 : 400,
+                    fontSize: isSelected ? '12px' : '11px',
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase' as const,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                    {isSelected && <span style={{ width: '6px', height: '6px', backgroundColor: '#8ff5ff', borderRadius: '50%', boxShadow: '0 0 5px #8ff5ff' }}></span>}
+                    {sat.name}
+                  </div>
+                  
+                  {isSelected && (
+                    <div style={{
+                      marginTop: '8px',
+                      paddingTop: '8px',
+                      borderTop: '1px solid rgba(70, 72, 76, 0.5)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px',
+                      fontSize: '10px',
+                      color: '#f8f9fe',
+                      fontWeight: 400
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '24px' }}>
+                        <span style={{ color: '#a9abb0' }}>ALT</span>
+                        <span>{sat.position?.altitude?.toFixed(0) || 0} km</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '24px' }}>
+                        <span style={{ color: '#a9abb0' }}>VEL</span>
+                        <span>{sat.position?.velocity?.toFixed(2) || 0} km/s</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: '24px' }}>
+                        <span style={{ color: '#a9abb0' }}>TYPE</span>
+                        <span style={{ color: '#8ff5ff' }}>{sat.orbitType}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </Tooltip>
             )}
           </CircleMarker>
