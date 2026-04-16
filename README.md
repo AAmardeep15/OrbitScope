@@ -8,7 +8,7 @@ OrbitScope is a high-performance, real-time satellite tracking platform. It prov
 - **Live Satellite Data**: Integrates live TLE (Two-Line Element) data from CelesTrak, accompanied by robust error handling and caching mechanisms.
 - **Advanced Search & Filtering**: Easily locate and track specific satellites with an intuitive user interface.
 - **"Event Horizon" Design System**: Features a high-end, futuristic dark mode, glassmorphism UI elements, neon cyan accents, and modern typography (Space Grotesk and Manrope).
-- **Interactive Mapping**: Seamlessly transition between a 3D globe and a detailed 2D geopolitical map.
+- **Interactive Mapping**: Seamlessly transition between a 3D globe and a detailed 2D geopolitical map to get detailed discription of the satellite.
 
 ## Tech Stack
 
